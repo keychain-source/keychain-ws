@@ -2,7 +2,7 @@
 <configuration>
 
 	<property name="LOG_HOME"
-		value="C:/git/iam_ms/keychain-ws/logs" />
+		value="%HOME%\site\wwwroot\logs"/>
 
 	<appender name="STDOUT"
 		class="ch.qos.logback.core.ConsoleAppender">

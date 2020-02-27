@@ -1,0 +1,1 @@
+java -jar -Dspring.config.location=conf\application.properties keychain-ui-1.0.jar
