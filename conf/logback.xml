@@ -2,7 +2,7 @@
 <configuration>
 
 	<property name="LOG_HOME"
-		value="%HOME%\site\wwwroot\logs"/>
+		value="logs"/>
 
 	<appender name="STDOUT"
 		class="ch.qos.logback.core.ConsoleAppender">
