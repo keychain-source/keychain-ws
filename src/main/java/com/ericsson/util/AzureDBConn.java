@@ -75,7 +75,7 @@ public class AzureDBConn {
 		String reg_status = KeychainUtils.notEmpty(registerQr.getQr_code_status())?registerQr.getQr_code_status():"registered";
 		logger.debug("Input QR Code Status : " + reg_status);
 		
-		if (!StringUtils.isEmpty(animatedLoginAppId)){
+		if (StringUtils.isEmpty(animatedLoginAppId)){
 			logger.debug("insert animated login id in ALAPP_DATA table");
 			String insertInAlappDataTableSQL = "INSERT INTO ALAPP_DATA (ALAPP_ID,ALAPP_REGISTRATION_STATUS,QR_CODE) VALUES (?,?,?)";
 			PreparedStatement preparedStatement = connection.prepareStatement(insertInAlappDataTableSQL);
@@ -106,10 +106,10 @@ public class AzureDBConn {
 		logger.debug("Input QR Code Status : " + reg_status);
 		
 		logger.debug("Update QR code as registered in QR_DATA table");
-		String updateQRCodeTable = "UPDATE QR_DATA set QR_REGISTRATION_STATUS =? WHERE QR_CODE=?";
+		String updateQRCodeTable = "UPDATE QR_DATA set QR_REGISTRATION_STATUS =? WHERE ALAPP_ID=?";
 		PreparedStatement preparedStatement1 = connection.prepareStatement(updateQRCodeTable);
 		preparedStatement1.setString(1, reg_status);
-		preparedStatement1.setString(2, registerQr.getQr_code());
+		preparedStatement1.setString(2, animatedLoginAppId);
 		preparedStatement1.execute();
 		preparedStatement1.close();
 
