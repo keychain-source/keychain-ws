@@ -9,6 +9,7 @@ import java.sql.Statement;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import com.ericsson.request.dto.RegisterQRRequestDTO;
 import com.ericsson.response.dto.QRCodeDTO;
@@ -74,7 +75,7 @@ public class AzureDBConn {
 		String reg_status = KeychainUtils.notEmpty(registerQr.getQr_code_status())?registerQr.getQr_code_status():"registered";
 		logger.debug("Input QR Code Status : " + reg_status);
 		
-		if (KeychainUtils.notEmpty(animatedLoginAppId)){
+		if (!StringUtils.isEmpty(animatedLoginAppId)){
 			logger.debug("insert animated login id in ALAPP_DATA table");
 			String insertInAlappDataTableSQL = "INSERT INTO ALAPP_DATA (ALAPP_ID,ALAPP_REGISTRATION_STATUS,QR_CODE) VALUES (?,?,?)";
 			PreparedStatement preparedStatement = connection.prepareStatement(insertInAlappDataTableSQL);
@@ -84,6 +85,25 @@ public class AzureDBConn {
 			preparedStatement.execute();
 			preparedStatement.close();
 		}
+		
+		logger.debug("Update QR code as registered in QR_DATA table");
+		String updateQRCodeTable = "UPDATE QR_DATA set QR_REGISTRATION_STATUS =? WHERE QR_CODE=?";
+		PreparedStatement preparedStatement1 = connection.prepareStatement(updateQRCodeTable);
+		preparedStatement1.setString(1, reg_status);
+		preparedStatement1.setString(2, registerQr.getQr_code());
+		preparedStatement1.execute();
+		preparedStatement1.close();
+
+		connection.close();
+
+		logger.debug("Leaving registerAlapIdWIthQRCode");
+	}
+	
+	public void updateRegistrationAlappIdWIthQRCode(RegisterQRRequestDTO registerQr, String animatedLoginAppId)
+			throws SQLException {
+		logger.debug("Inside registerAlapIdWIthQRCode");
+		String reg_status = KeychainUtils.notEmpty(registerQr.getQr_code_status())?registerQr.getQr_code_status():"registered";
+		logger.debug("Input QR Code Status : " + reg_status);
 		
 		logger.debug("Update QR code as registered in QR_DATA table");
 		String updateQRCodeTable = "UPDATE QR_DATA set QR_REGISTRATION_STATUS =? WHERE QR_CODE=?";
@@ -177,7 +197,7 @@ public class AzureDBConn {
 
 	public String getAlappId(String animatedLoginAppId) throws SQLException {
 		logger.debug("Inside getAlappId");
-		String appID = "";
+		String appID = null;
 		AlappVO alappdto = getAlappIDInfo(animatedLoginAppId);
 		if (alappdto != null) {
 			appID = alappdto.getAlappId();

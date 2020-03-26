@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -141,7 +142,12 @@ public class KeychainController {
 			}
 			
 			logger.debug("Register App Login Id");
-			new AzureDBConn().registerAlappIdWIthQRCode(registerQr, animatedLoginAppId);
+			if (!StringUtils.isEmpty(alappIdFromDB)){
+				new AzureDBConn().registerAlappIdWIthQRCode(registerQr, animatedLoginAppId);
+			} else{
+				new AzureDBConn().updateRegistrationAlappIdWIthQRCode(registerQr, animatedLoginAppId);
+			}
+			
 			logger.debug("App login ID registered");
 
 		} catch (ClassNotFoundException e) {
